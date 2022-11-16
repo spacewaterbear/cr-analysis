@@ -1,0 +1,17 @@
+[server]
+
+baseUrlPath = "cr-analysis"
+
+headless = true
+
+enableCORS = true
+
+enableXsrfProtection = true
+
+enableWebsocketCompression = false
+
+[browser]
+
+serverAddress = "0.0.0.0"
+
+serverPort = 8507
