@@ -13,6 +13,7 @@ st.set_page_config(layout="wide", page_icon="👨‍", page_title="Suivi de pré
 # @st.experimental_memo
 def load_main_csv():
     df = pd.read_csv(v.all_csv_path, parse_dates=["date"])
+    df["id"] = df["title"] + df["last_name"] + df["first_name"]
     df.sort_values(by="date", inplace=True)
     return df
 
