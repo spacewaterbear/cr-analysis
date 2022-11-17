@@ -60,7 +60,7 @@ if not all_days:
 dg = df.groupby(["date", "status"]).count()["title"].reset_index().rename(columns={"title":"count"})
 long_df = px.data.medals_long()
 
-
+st.write("## Vision globale")
 fig = px.bar(df, x="raw_time", y="status", color="status", title="Absence",
              category_orders={"status": ["present", "legit_forgive", "forgive", "absent"]})
 st.plotly_chart(fig)
