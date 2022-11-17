@@ -8,9 +8,12 @@ import locale
 
 locale.setlocale(locale.LC_ALL, '')
 
-st.set_page_config(layout="wide", page_icon="👨‍", page_title="Suivi de présence des conseillers de Paris")
+st.set_page_config(layout="wide",
+                   page_title="Suivi de présence des conseillers de Paris",
+                   page_icon=":bar_chart:"
+                   )
 
-# @st.experimental_memo
+@st.experimental_memo
 def load_main_csv():
     df = pd.read_csv(v.all_csv_path, parse_dates=["date"])
     df["id"] = df["title"] + df["last_name"] + df["first_name"]
@@ -33,6 +36,8 @@ st.write("check out this ")
 with st.expander("Voir les données brutes"):
     st.dataframe(df)
     STUtils.generate_df_download_button(df=df, file_name="raw_data")
+
+st.sidebar.image("https://www.anticor.org/wp-content/uploads/2022/09/logo-anti-cor.png")
 
 st.sidebar.write("## Paramètres")
 
