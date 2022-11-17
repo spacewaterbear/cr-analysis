@@ -26,21 +26,24 @@ if df.empty:
 # get unique year from the column date in df
 years = df["date"].dt.year.unique().tolist()
 
-st.title("Suivi de présence des conseillers de Paris")
+st.title("Suivi de présence des conseillers de Paris (version alpha)")
+st.write(f":warning: Les données ont été récupéré automatiquement à partir des pdfs disponibles sur [le site de la ville de Paris]({v.paris_pdf_url}). Il est possible que certaines données soient erronées. :warning:")
 
+st.write("check out this ")
 with st.expander("Voir les données brutes"):
     st.dataframe(df)
     STUtils.generate_df_download_button(df=df, file_name="raw_data")
 
+st.sidebar.write("## Paramètres")
 
-
-years = st.sidebar.multiselect("Choisir les années", options=years, default=years[0], format_func=str)
+years = st.sidebar.multiselect("Choisir les années que vous souhaitez analyser", options=years, default=years[0], format_func=str, help="Par défaut, prend une année parmi celles disponibles")
 
 unique_dates = df[df["date"].dt.year.isin(years)]["date"].unique()
 nb_dates = len(unique_dates)
+
 st.sidebar.write(f"Nombres de jour analysées sur la période {', '.join(map(str,years))} : {nb_dates}")
 
-all_days = st.sidebar.checkbox("Analyser tous les jours", value=True)
+all_days = st.sidebar.checkbox("Analyser tous les jours", value=True, help="Si décoché, il faudra sélectionner les jours manuellement")
 
 if not all_days:
     days = st.sidebar.multiselect("Choisissez un ou plusieurs jours à analyser", options=unique_dates,
