@@ -2,7 +2,6 @@ import time
 
 import numpy as np
 
-from models.cr import PresenceRegexPattern
 
 
 class Utils:
@@ -29,7 +28,3 @@ class Utils:
         while delai < mini:
             delai = abs(np.random.normal(mean, sigma, 1)[0])
         time.sleep(delai)
-
-    @staticmethod
-    def find_which_status_are_present_in_text_page(text):
-        is_there = [True if status in text else False for status in PresenceRegexPattern.__annotations__.values()]

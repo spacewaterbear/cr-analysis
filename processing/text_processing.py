@@ -2,12 +2,10 @@ import re
 from typing import List
 
 import dateparser
-
-import variables as v
 import pandas as pd
 from loguru import logger
 
-from models.cr import PresenceRegexPattern
+from models.cr import get_presence_per_period, PresenceRegexPattern
 from models.custom_execption import RegexFailed
 
 
@@ -19,16 +17,16 @@ class FromTextToDF:
 
         :return: the names of the persons
         """
-        matches = re.findall(regex_pattern, text, re.MULTILINE | re.DOTALL)
+        matches = re.findall(regex_pattern, text, re.MULTILINE | re.DOTALL | re.IGNORECASE)
         if matches:
             return matches[0]
         else:
             logger.warning(f"Could not find the text with {regex_pattern=} in  {text[:40]=}")
 
     @staticmethod
-    def extract_names_according_to_status_and_return_list(text: str) -> dict:
+    def extract_names_according_to_status_and_return_list(text: str, presence_regex_pattern: PresenceRegexPattern) -> dict:
         data = {}
-        for absence_type, regex_pattern in PresenceRegexPattern().dict().items():
+        for absence_type, regex_pattern in presence_regex_pattern.dict().items():
             data[absence_type] = FromTextToDF.extract_names_according_to_status(text=text, regex_pattern=regex_pattern)
         # remove key where walue is none
         data = {k: v for k, v in data.items() if v is not None}
@@ -85,19 +83,19 @@ class FromTextToDF:
         return df
 
     @staticmethod
-    def split_text_per_day_period(raw_text, prod=True) -> dict:
+    def split_text_per_day_period(raw_text, prod=False) -> dict:
         """Sometimes, it can have the morning and the afternoon session in the same page : todo: fix prod stuff"""
-        matches = re.finditer(v.get_presence_per_period, raw_text, re.MULTILINE | re.DOTALL | re.IGNORECASE)
+        matches = re.finditer(get_presence_per_period, raw_text, re.MULTILINE | re.DOTALL | re.IGNORECASE)
         starting_index_match = [m.start(0) for m in matches]
         nb_matches = len(starting_index_match)
         if nb_matches == 0:
-            message = f"Date found for {raw_text=}"
+            message = f"Date not found for {raw_text=}"
             if prod:
                 logger.warning(message)
             else:
                 raise Exception(message)
         texts = []
-        dates = re.findall(v.get_presence_per_period, raw_text, re.MULTILINE | re.DOTALL | re.IGNORECASE)
+        dates = re.findall(get_presence_per_period, raw_text, re.MULTILINE | re.DOTALL | re.IGNORECASE)
         for i, index in enumerate(starting_index_match):
             if i != len(starting_index_match) - 1:
                 texts.append(raw_text[index:starting_index_match[i + 1]])
@@ -120,6 +118,6 @@ class FromTextToDF:
         # get year from file name using regex
         year = re.findall(r"\d{4}", file_name_without_extension)[0]
         # use dateparser to get the date from the column "raw_time"
-        df["date"] = df["raw_time"].apply(lambda x:  dateparser.parse(year + x.split("-")[0], languages=["fr"]))
+        df["date"] = df["raw_time"].apply(lambda x: dateparser.parse(year + re.sub(r"\d{4}", "", x.split("-")[0]), languages=["fr"]))
 
         return df

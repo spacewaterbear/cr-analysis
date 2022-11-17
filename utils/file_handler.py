@@ -1,15 +1,11 @@
 import json
 import os
-import time
 from pathlib import Path
 from typing import Tuple
 
 # open a pdf with pydf2
 import PyPDF2
-import numpy as np
 from loguru import logger
-
-from models.cr import PresenceRegexPattern
 
 
 class FileHandler:
@@ -18,6 +14,7 @@ class FileHandler:
     def read_file(file_path: str):
         with open(file_path, "r") as f:
             return f.read()
+
     @staticmethod
     def save_dic_as_json(dic: dict, json_path: str):
         """Save dic as json"""
@@ -31,6 +28,7 @@ class FileHandler:
         logger.info(f"Loading json from {json_path}")
         with open(json_path, "r") as f:
             return json.load(f)
+
     @staticmethod
     def save_file(text: str, file_name: str):
         """Save text in file"""

@@ -14,6 +14,7 @@ st.set_page_config(layout="wide", page_icon="👨‍", page_title="Suivi de pré
 def load_main_csv():
     df = pd.read_csv(v.all_csv_path, parse_dates=["date"])
     df["id"] = df["title"] + df["last_name"] + df["first_name"]
+    df["Nom complet"] = df["title"] + " " + df["last_name"] + " " + df["first_name"]
     df.sort_values(by="date", inplace=True)
     return df
 
@@ -52,7 +53,20 @@ dg = df.groupby(["date", "status"]).count()["title"].reset_index().rename(column
 long_df = px.data.medals_long()
 
 
-fig = px.bar(df, x="date", y="status", color="status", title="Absence",
-             category_orders={"status": ["present", "legit_forgive", "absent"]})
+fig = px.bar(df, x="raw_time", y="status", color="status", title="Absence",
+             category_orders={"status": ["present", "legit_forgive", "forgive", "absent"]})
 st.plotly_chart(fig)
 
+
+presence_type_dg = df.groupby("status").count()["title"].reset_index().rename(columns={"title":"count"})
+
+
+pie_fig = px.pie(presence_type_dg, values="count", names="status", title="Répartition des présences")
+st.plotly_chart(pie_fig)
+with st.expander("Voir les données brutes"):
+    st.dataframe(presence_type_dg)
+
+best_absent = df[df["status"] == "absent"].groupby(["Nom complet"]).count()["title"].reset_index().rename(columns={"title":"count"})
+top_ten_absent = best_absent.sort_values(by="count", ascending=False).head(10).reset_index(drop=True)
+st.write("## Top 10 des absents par demi-journée")
+st.dataframe(top_ten_absent)
