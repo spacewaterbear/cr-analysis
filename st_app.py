@@ -32,7 +32,6 @@ years = df["date"].dt.year.unique().tolist()
 st.title("Suivi de présence des conseillers de Paris (version alpha)")
 st.write(f":warning: Les données ont été récupéré automatiquement à partir des pdfs disponibles sur [le site de la ville de Paris]({v.paris_pdf_url}). Il est possible que certaines données soient erronées. :warning:")
 
-st.write("check out this ")
 with st.expander("Voir les données brutes"):
     st.dataframe(df)
     STUtils.generate_df_download_button(df=df, file_name="raw_data")
