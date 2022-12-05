@@ -45,7 +45,7 @@ years = st.sidebar.multiselect("Choisir les années que vous souhaitez analyser"
 unique_dates = df[df["date"].dt.year.isin(years)]["date"].unique()
 nb_dates = len(unique_dates)
 
-st.sidebar.write(f"Nombres de jour analysées sur la période {', '.join(map(str,years))} : {nb_dates}")
+st.sidebar.write(f"Nombres de jours analysés sur la période {', '.join(map(str,years))} : {nb_dates}")
 
 all_days = st.sidebar.checkbox("Analyser tous les jours", value=True, help="Si décoché, il faudra sélectionner les jours manuellement")
 
@@ -75,5 +75,5 @@ with st.expander("Voir les données brutes"):
 
 best_absent = df[df["status"] == "absent"].groupby(["Nom complet"]).count()["title"].reset_index().rename(columns={"title":"count"})
 top_ten_absent = best_absent.sort_values(by="count", ascending=False).head(10).reset_index(drop=True)
-st.write("## Top 10 des absents par demi-journée")
+st.write("## Top 10 des absents par demi-journées")
 st.dataframe(top_ten_absent)
