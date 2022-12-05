@@ -75,5 +75,5 @@ with st.expander("Voir les données brutes"):
 
 best_absent = df[df["status"] == "absent"].groupby(["Nom complet"]).count()["title"].reset_index().rename(columns={"title":"count"})
 top_ten_absent = best_absent.sort_values(by="count", ascending=False).head(10).reset_index(drop=True)
-st.write("## Top 10 des absents par demi-journées")
+st.write("## Top 10 des absents non justifiés par demi-journées")
 st.dataframe(top_ten_absent)
